@@ -13,8 +13,8 @@ export default function Dashboard() {
       {/* User Profile Section */}
       <View style={styles.profileSection}>
         <Image source={{ uri: "https://shorturl.at/CuRCc" }} style={styles.profileImage} />
-        <Text style={styles.profileName}>User Name</Text>
-        <Text style={styles.profileEmail}>user@example.com</Text>
+        <Text style={styles.profileName}>Patrick Mwangi</Text>
+        <Text style={styles.profileEmail}>frashid274@gmail.com</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
