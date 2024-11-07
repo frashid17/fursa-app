@@ -51,7 +51,7 @@ const reviews = [
     user: "Patrick Mwangi",
     rating: 4,
     text: "Great opportunity, the company culture seems amazing. Definitely recommend!",
-    avatar: "https://i.pravatar.cc/150?img=1", // Male Avatar
+    avatar: "https://shorturl.at/4z7xx", // Male Avatar
   },
   {
     user: "Mumina Dalacha",
