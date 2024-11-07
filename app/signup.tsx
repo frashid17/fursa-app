@@ -1,25 +1,66 @@
-// /app/signup.tsx
 import React, { useState } from "react";
 import { Text, View, TextInput, Button, StyleSheet, Alert } from "react-native";
-import { Link } from "expo-router"; // Import Link for navigation
+import { Link, useRouter } from "expo-router"; // Import Link for navigation
+import { API_URL } from "../config"; // Import your API URL from a config file
 
 export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const router = useRouter();
 
   // Handle the form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match.");
       return;
     }
 
     if (name && email && password) {
-      Alert.alert("Success", "Account created successfully!");
-      // Handle further actions like API calls or navigation after successful signup
+      try {
+        // Log the request data to verify it's correct
+        console.log({
+          username: name,
+          email,
+          password,
+        });
+
+        // Send data to the Django backend via POST request
+        const response = await fetch(`${API_URL}/signup/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: name,
+            email,
+            password,
+          }),
+        });
+
+        // Log the raw response text to inspect what's returned from the server
+        const responseText = await response.text();
+        console.log("Raw Response Text:", responseText);
+
+        // Attempt to parse the response text as JSON
+        const data = JSON.parse(responseText);
+
+        if (response.ok) {
+          // Account creation successful
+          Alert.alert("Success", "Account created successfully!");
+          router.push("/login"); // Redirect to login page after successful signup
+        } else {
+          // Display error from server if any
+          Alert.alert("Error", data.message || "Something went wrong.");
+        }
+      } catch (error) {
+        // Log the error and display a generic message to the user
+        console.error("Error during signup:", error); // Log the error for troubleshooting
+        Alert.alert("Error", "Unable to reach the server. Please try again later.");
+      }
     } else {
+      // Alert for missing required fields
       Alert.alert("Error", "Please fill in all fields.");
     }
   };
