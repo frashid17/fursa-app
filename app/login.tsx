@@ -1,34 +1,53 @@
-// /app/login.tsx
 import React, { useState } from "react";
 import { Text, View, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router"; // Import useRouter for navigation
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage for storing tokens
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter(); // Initialize the router
 
-  // Default credentials
-  const defaultEmail = "frashid274@gmail.com";
-  const defaultPassword = "password";
-
   // Handle the login submission
-  const handleLogin = () => {
-    // Check if the email is correct
-    if (email !== defaultEmail) {
-      Alert.alert("Error", "Incorrect email. Please try again.");
-      return; // Stop further checks if email is incorrect
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password.");
+      return;
     }
 
-    // Check if the password is correct
-    if (password !== defaultPassword) {
-      Alert.alert("Error", "Wrong password. Please try again.");
-      return; // Stop further action if password is incorrect
-    }
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/login/", { // Replace with your API URL
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
-    // If both email and password are correct, proceed to dashboard
-    Alert.alert("Success", "Logged in successfully!");
-    router.push("/dashboard"); // Navigate to dashboard if login is successful
+      const data = await response.json();
+
+      if (!response.ok) {
+        Alert.alert("Error", data.error || "Something went wrong.");
+        return;
+      }
+
+      if (data.access_token) {
+        // Store the tokens in AsyncStorage
+        await AsyncStorage.setItem('access_token', data.access_token);
+        await AsyncStorage.setItem('refresh_token', data.refresh_token); // Store refresh token if needed
+
+        Alert.alert("Success", "Logged in successfully!");
+        router.push("/dashboard"); // Navigate to dashboard if login is successful
+      } else {
+        Alert.alert("Error", "Invalid credentials.");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "An error occurred during login. Please try again later.");
+    }
   };
 
   return (
