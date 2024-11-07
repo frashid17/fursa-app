@@ -1,6 +1,5 @@
-// /app/job-listings.tsx
 import React, { useState } from "react";
-import { Text, View, TouchableOpacity, StyleSheet, ScrollView, TextInput, Button, Alert } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, ScrollView, TextInput, Button, Alert, Image } from "react-native";
 
 // Job data
 const jobs = [
@@ -46,6 +45,40 @@ const jobs = [
   },
 ];
 
+// Sample reviews with ratings
+const reviews = [
+  {
+    user: "Patrick Mwangi",
+    rating: 4,
+    text: "Great opportunity, the company culture seems amazing. Definitely recommend!",
+    avatar: "https://i.pravatar.cc/150?img=1", // Male Avatar
+  },
+  {
+    user: "Mumina Dalacha",
+    rating: 5,
+    text: "Awesome position for anyone with a passion for tech. Very fast-paced and challenging work environment!",
+    avatar: "https://i.pravatar.cc/150?img=2", // Female Avatar
+  },
+  {
+    user: "Ahlam Abdhallah",
+    rating: 3,
+    text: "Job looks good, but the workload is a bit too much. Could be better managed.",
+    avatar: "https://i.pravatar.cc/150?img=3", // Female Avatar
+  },
+  {
+    user: "Nickson Simiyu",
+    rating: 5,
+    text: "Great work-life balance, supportive team, and great growth opportunities.",
+    avatar: "https://i.pravatar.cc/150?img=4", // Male Avatar
+  },
+  {
+    user: "Ashley Obano",
+    rating: 4,
+    text: "The role is exciting, but there's room for improvement in communication from management.",
+    avatar: "https://i.pravatar.cc/150?img=5", // Female Avatar
+  },
+];
+
 export default function JobListings() {
   const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
   const [review, setReview] = useState("");
@@ -68,7 +101,7 @@ export default function JobListings() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Job Listings</Text>
-      
+
       {jobs.map((job) => (
         <View key={job.id} style={styles.jobCard}>
           <TouchableOpacity onPress={() => toggleJobDetails(job.id)} style={styles.jobTitleContainer}>
@@ -100,12 +133,28 @@ export default function JobListings() {
         </View>
       ))}
 
-      {/* Overall review section */}
+      {/* User Reviews */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>User Reviews</Text>
-        <Text style={styles.footerText}>- This app is great, I found a job in no time!</Text>
-        <Text style={styles.footerText}>- The interface is user-friendly, highly recommend!</Text>
-        <Text style={styles.footerText}>- Lots of job opportunities, loved the experience.</Text>
+        {reviews.map((review, index) => (
+          <View key={index} style={styles.reviewCard}>
+            <View style={styles.userInfo}>
+              <Image
+                source={{ uri: review.avatar }}
+                style={styles.userAvatar}
+              />
+              <Text style={styles.userName}>{review.user}</Text>
+            </View>
+            <View style={styles.ratingContainer}>
+              {Array.from({ length: 5 }, (_, i) => (
+                <Text key={i} style={i < review.rating ? styles.filledStar : styles.emptyStar}>
+                  ★
+                </Text>
+              ))}
+            </View>
+            <Text style={styles.reviewText}>{review.text}</Text>
+          </View>
+        ))}
       </View>
     </ScrollView>
   );
@@ -177,7 +226,48 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   footerText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
     color: "#333",
+    marginBottom: 10,
+  },
+  reviewCard: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    elevation: 3,
+  },
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  userAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  filledStar: {
+    color: "#FFD700",
+    fontSize: 18,
+  },
+  emptyStar: {
+    color: "#ccc",
+    fontSize: 18,
+  },
+  reviewText: {
+    fontSize: 14,
+    color: "#555",
   },
 });
