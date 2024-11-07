@@ -1,18 +1,45 @@
-import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity, ScrollView, Image } from "react-native";
-import { useRouter } from "expo-router"; // For navigation
-import { Ionicons } from "@expo/vector-icons"; // For iconography
+// Dashboard.tsx
+import React, { useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import * as DocumentPicker from "expo-document-picker"; // Import DocumentPicker
 
 export default function Dashboard() {
   const router = useRouter();
+  const [cvUri, setCvUri] = useState<string | null>(null); // State to store CV URI
+
+ // Function to pick a document
+const pickDocument = async () => {
+  const result = await DocumentPicker.getDocumentAsync({
+    type: "application/pdf", // Allow only PDF files
+  });
+
+  // Narrow the type to check if it's a success result
+  if (result.type === "success") {
+    setCvUri(result.uri); // Store the URI for later display
+  } else {
+    console.log("Document selection was canceled");
+  }
+};
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Welcome to Your Dashboard</Text>
-      
+
       {/* User Profile Section */}
       <View style={styles.profileSection}>
-        <Image source={{ uri: "https://shorturl.at/CuRCc" }} style={styles.profileImage} />
+        <Image
+          source={{ uri: "https://shorturl.at/CuRCc" }}
+          style={styles.profileImage}
+        />
         <Text style={styles.profileName}>Patrick Mwangi</Text>
         <Text style={styles.profileEmail}>frashid274@gmail.com</Text>
       </View>
@@ -21,17 +48,14 @@ export default function Dashboard() {
         {/* Button to navigate to user profile */}
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/profile")}
+          onPress={() => router.push({ pathname: "/profile", params: { cvUri } })}
         >
           <Ionicons name="person" size={24} color="white" />
           <Text style={styles.buttonText}>View Profile</Text>
         </TouchableOpacity>
 
-        {/* Button to add CV (consider adding an alternative way if needed) */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/upload-cv")}
-        >
+        {/* Button to add CV */}
+        <TouchableOpacity style={styles.button} onPress={pickDocument}>
           <Ionicons name="document" size={24} color="white" />
           <Text style={styles.buttonText}>Upload CV</Text>
         </TouchableOpacity>
