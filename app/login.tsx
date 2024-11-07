@@ -1,19 +1,34 @@
 // /app/login.tsx
 import React, { useState } from "react";
 import { Text, View, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { useRouter } from "expo-router"; // Import useRouter for navigation
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter(); // Initialize the router
+
+  // Default credentials
+  const defaultEmail = "frashid274@gmail.com";
+  const defaultPassword = "password";
 
   // Handle the login submission
   const handleLogin = () => {
-    if (email && password) {
-      Alert.alert("Success", "Logged in successfully!");
-      // Handle further actions like API calls for login
-    } else {
-      Alert.alert("Error", "Please enter both email and password.");
+    // Check if the email is correct
+    if (email !== defaultEmail) {
+      Alert.alert("Error", "Incorrect email. Please try again.");
+      return; // Stop further checks if email is incorrect
     }
+
+    // Check if the password is correct
+    if (password !== defaultPassword) {
+      Alert.alert("Error", "Wrong password. Please try again.");
+      return; // Stop further action if password is incorrect
+    }
+
+    // If both email and password are correct, proceed to dashboard
+    Alert.alert("Success", "Logged in successfully!");
+    router.push("/dashboard"); // Navigate to dashboard if login is successful
   };
 
   return (
@@ -48,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#F5F5F5", // Light background for clean look
+    backgroundColor: "#F5F5F5",
   },
   header: {
     fontSize: 28,
