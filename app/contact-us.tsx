@@ -7,15 +7,33 @@ export default function ContactUs() {
   const [message, setMessage] = useState("");
 
   // Handle form submission
-  const handleSubmit = () => {
-    if (name && email && message) {
-      Alert.alert("Thank You!", "Your message has been sent.");
-      // Optionally clear fields or handle the API call here
-      setName("");
-      setEmail("");
-      setMessage("");
-    } else {
+  const handleSubmit = async () => {
+    if (!name || !email || !message) {
       Alert.alert("Error", "Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://10.0.1.215:8000/contact/", { // Replace with your actual backend URL
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (response.ok) {
+        Alert.alert("Thank You!", "Your message has been sent.");
+        // Optionally clear the fields
+        setName("");
+        setEmail("");
+        setMessage("");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send message");
+      }
+    } catch (error) {
+      Alert.alert("Error", error.message || "Something went wrong. Please try again.");
     }
   };
 
@@ -55,7 +73,7 @@ export default function ContactUs() {
       <Button title="Send Message" onPress={handleSubmit} color="#007BFF" />
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Or reach us via email: support@fursa.com</Text>
+        <Text style={styles.footerText}>Or reach us via email: frashid274@gmail.com</Text>
       </View>
     </ScrollView>
   );
