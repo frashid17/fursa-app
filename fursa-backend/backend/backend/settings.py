@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -6,7 +7,7 @@ SECRET_KEY = 'django-insecure-8xprzylm17fthun$a@c**klqx=hc!&qt1tnrzfq^y@8b!6p+@3
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '192.168.1.199','10.0.1.215']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '192.168.1.199', '10.0.1.215']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -101,8 +102,6 @@ REST_FRAMEWORK = {
 }
 
 # JWT Settings (optional, but recommended)
-from datetime import timedelta
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Short expiration time for security
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Refresh token valid for 1 day
@@ -114,3 +113,17 @@ SIMPLE_JWT = {
     'USER_ID_FIELD': 'id',  # Default field to identify the user
     'USER_ID_CLAIM': 'user_id',  # Claim field for the user ID in the token
 }
+
+# Email backend configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465  # SSL port for secure email communication
+EMAIL_USE_SSL = True  # Use SSL instead of TLS
+EMAIL_HOST_USER = 'frashid274@gmail.com'  # Replace with your Gmail address
+EMAIL_HOST_PASSWORD = 'fjaz filc otco bmbc' # Replace with your Gmail password or app password
+DEFAULT_FROM_EMAIL = 'frashid274@gmail.com'  # Default email for sending messages
+
+# Email settings for Gmail
+# Ensure you use App Password or turn off 2FA and allow less secure apps if 2FA is off
+# You may need to configure your Google account to allow "less secure apps" 
+# or use an "App Password" if you have two-factor authentication enabled.
