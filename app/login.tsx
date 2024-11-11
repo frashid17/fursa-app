@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router"; // Import useRouter for navigation
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage for storing tokens
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter(); // Initialize the router
 
   // Handle the login submission
@@ -14,6 +15,8 @@ export default function Login() {
       Alert.alert("Error", "Please enter both email and password.");
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login/", { // Replace with your API URL
@@ -28,6 +31,8 @@ export default function Login() {
       });
 
       const data = await response.json();
+
+      setLoading(false);
 
       if (!response.ok) {
         Alert.alert("Error", data.error || "Something went wrong.");
@@ -45,6 +50,7 @@ export default function Login() {
         Alert.alert("Error", "Invalid credentials.");
       }
     } catch (error) {
+      setLoading(false);
       console.error(error);
       Alert.alert("Error", "An error occurred during login. Please try again later.");
     }
@@ -52,15 +58,15 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Login to Your Account</Text>
+      <Text style={styles.header}>Instagram</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Phone number, username, or email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
       />
       <TextInput
         style={styles.input}
@@ -68,10 +74,31 @@ export default function Login() {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
       />
 
-      <Button title="Log In" onPress={handleLogin} />
+      <TouchableOpacity
+        style={styles.loginButton}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.loginButtonText}>Log In</Text>
+        )}
+      </TouchableOpacity>
+
+      <TouchableOpacity>
+        <Text style={styles.forgotPassword}>Forgot password?</Text>
+      </TouchableOpacity>
+
+      <View style={styles.signupContainer}>
+        <Text style={styles.signupText}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => router.push("/signup")}>
+          <Text style={styles.signupLink}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -82,13 +109,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#fff",
   },
   header: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
-    color: "#333",
-    marginBottom: 30,
+    color: "#000",
+    marginBottom: 40,
   },
   input: {
     width: "100%",
@@ -96,9 +123,40 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: "#ccc",
-    backgroundColor: "#fff",
+    borderColor: "#dbdbdb",
+    backgroundColor: "#fafafa",
     fontSize: 16,
     color: "#333",
+  },
+  loginButton: {
+    width: "100%",
+    padding: 15,
+    backgroundColor: "#0095f6", // Instagram blue color
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  loginButtonText: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  forgotPassword: {
+    fontSize: 14,
+    color: "#0095f6",
+    marginBottom: 30,
+  },
+  signupContainer: {
+    flexDirection: "row",
+  },
+  signupText: {
+    fontSize: 14,
+    color: "#000",
+  },
+  signupLink: {
+    fontSize: 14,
+    color: "#0095f6",
+    fontWeight: "bold",
   },
 });
