@@ -1,9 +1,10 @@
+from django.core.mail import send_mail
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Serializer for signup
@@ -12,12 +13,6 @@ class SignupSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
-
-    def validate_email(self, value):
-        """Check if email is already in use."""
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Email already exists. Please log in.")
-        return value
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -68,3 +63,27 @@ class LoginView(APIView):
             }, status=status.HTTP_200_OK)
         
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# API View for Contact Us (new)
+class ContactUsView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        # Extract the data from the request body
+        name = request.data.get('name')
+        email = request.data.get('email')
+        message = request.data.get('message')
+
+        # Send the email using Django's send_mail function
+        try:
+            send_mail(
+                subject="Contact Us Message",
+                message=f"From: {name} ({email})\n\nMessage: {message}",
+                from_email=email,  # Send from the user's email
+                recipient_list=['your-email@example.com'],  # Replace with your email
+                fail_silently=False,  # Optionally set to True in production
+            )
+            return Response({"message": "Message sent successfully!"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": f"Failed to send message: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
