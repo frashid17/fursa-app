@@ -13,6 +13,12 @@ class SignupSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
+    def validate_email(self, value):
+        """Check if email is already in use."""
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists. Please log in.")
+        return value
+
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
