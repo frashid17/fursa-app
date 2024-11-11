@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, Button, StyleSheet, Alert } from "react-native";
-import { Link, useRouter } from "expo-router"; // Import Link for navigation
-import { API_URL } from "../config"; // Import your API URL from a config file
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient for gradient button
+import { Link, useRouter } from "expo-router";
+import { API_URL } from "../config";
 
 export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Handle the form submission
   const handleSubmit = async () => {
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match.");
@@ -18,49 +19,31 @@ export default function Signup() {
     }
 
     if (name && email && password) {
+      setLoading(true);
       try {
-        // Log the request data to verify it's correct
-        console.log({
-          username: name,
-          email,
-          password,
-        });
-
-        // Send data to the Django backend via POST request
         const response = await fetch(`${API_URL}/signup/`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: name,
-            email,
-            password,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: name, email, password }),
         });
-
-        // Log the raw response text to inspect what's returned from the server
-        const responseText = await response.text();
-        console.log("Raw Response Text:", responseText);
-
-        // Attempt to parse the response text as JSON
-        const data = JSON.parse(responseText);
+        const data = await response.json();
 
         if (response.ok) {
-          // Account creation successful
           Alert.alert("Success", "Account created successfully!");
-          router.push("/login"); // Redirect to login page after successful signup
+          router.push("/login");
+        } else if (data.email && data.email.includes("Email already exists")) {
+          Alert.alert("Error", "Email already exists. Please log in.");
+          router.push("/login");
         } else {
-          // Display error from server if any
           Alert.alert("Error", data.message || "Something went wrong.");
         }
       } catch (error) {
-        // Log the error and display a generic message to the user
-        console.error("Error during signup:", error); // Log the error for troubleshooting
+        console.error("Error during signup:", error);
         Alert.alert("Error", "Unable to reach the server. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     } else {
-      // Alert for missing required fields
       Alert.alert("Error", "Please fill in all fields.");
     }
   };
@@ -101,10 +84,22 @@ export default function Signup() {
         placeholderTextColor="#888"
       />
 
-      {/* Submit button with custom style */}
-      <Button title="Sign Up" onPress={handleSubmit} />
+      {/* Gradient button styled like Instagram */}
+      <TouchableOpacity style={styles.buttonContainer} onPress={handleSubmit} disabled={loading}>
+        <LinearGradient
+          colors={["#fd5949", "#d6249f", "#285AEB"]}
+          style={styles.button}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="#FFF" />
+          ) : (
+            <Text style={styles.buttonText}>Sign Up</Text>
+          )}
+        </LinearGradient>
+      </TouchableOpacity>
 
-      {/* Link to login page */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
           Already have an account?{" "}
@@ -123,7 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#F5F5F5", // Light background for clean look
+    backgroundColor: "#F0F2F5",
   },
   header: {
     fontSize: 28,
@@ -142,6 +137,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  buttonContainer: {
+    width: "100%",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  button: {
+    paddingVertical: 15,
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   footer: {
     marginTop: 20,
   },
@@ -150,7 +160,7 @@ const styles = StyleSheet.create({
     color: "#555",
   },
   link: {
-    color: "#007BFF", // Blue link color
+    color: "#007BFF",
     fontWeight: "bold",
   },
 });
