@@ -4,9 +4,9 @@ import { Text, View, StyleSheet, ScrollView, Image } from "react-native";
 export default function AboutUs() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>About Us</Text>
+      {/* <Text style={styles.header}>About Us</Text> */}
       <Image 
-        source={{uri: 'https://example.com/your-image.jpg'}} 
+        source={{uri: 'https://shorturl.at/mN5TW'}} 
         style={styles.image} 
         resizeMode="cover" 
       />
