@@ -21,13 +21,20 @@ export default function RootLayout() {
       <Stack.Screen
         name="signup"
         options={{
-          title: "Sign Up", // Custom header title for the sign-up screen
+          headerShown: false,// Custom header title for the sign-up screen
         }}
       />
       <Stack.Screen
-        name="dashboard"
+        name="about-us"
         options={{
-          title: "Dashboard", // Custom header for the dashboard
+          title: "About Us", // Custom header for the dashboard
+          headerShown: true, // Show header on the dashboard screen
+        }}
+      />
+       <Stack.Screen
+        name="contact-us"
+        options={{
+          title: "Contact Us", // Custom header for the dashboard
           headerShown: true, // Show header on the dashboard screen
         }}
       />
