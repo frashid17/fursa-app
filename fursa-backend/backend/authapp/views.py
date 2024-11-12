@@ -18,6 +18,12 @@ class SignupSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
+    def validate_email(self, value):
+        # Check if email already exists
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists.")
+        return value
+
 # Serializer for login
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -32,6 +38,8 @@ class SignupView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             return Response({"message": "Account created successfully!"}, status=status.HTTP_201_CREATED)
+        
+        # If the serializer is not valid, return the error response with validation details
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # API View for Login
