@@ -1,4 +1,4 @@
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -65,7 +65,7 @@ class LoginView(APIView):
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# API View for Contact Us (new)
+# API View for Contact Us (updated)
 class ContactUsView(APIView):
     permission_classes = [AllowAny]
 
@@ -75,15 +75,23 @@ class ContactUsView(APIView):
         email = request.data.get('email')
         message = request.data.get('message')
 
+        # Validate inputs
+        if not name or not email or not message:
+            return Response({"error": "All fields are required: name, email, and message."}, status=status.HTTP_400_BAD_REQUEST)
+
         # Send the email using Django's send_mail function
         try:
             send_mail(
-                subject="Contact Us Message",
+                subject="Fursa App Support",
                 message=f"From: {name} ({email})\n\nMessage: {message}",
                 from_email=email,  # Send from the user's email
-                recipient_list=['your-email@example.com'],  # Replace with your email
-                fail_silently=False,  # Optionally set to True in production
+                recipient_list=['frashid274@gmail.com'],  # Replace with your actual recipient email
+                fail_silently=False,
             )
             return Response({"message": "Message sent successfully!"}, status=status.HTTP_200_OK)
+        
+        except BadHeaderError:
+            return Response({"error": "Invalid header detected in email."}, status=status.HTTP_400_BAD_REQUEST)
+        
         except Exception as e:
             return Response({"error": f"Failed to send message: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
