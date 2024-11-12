@@ -1,7 +1,16 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import {
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router"; // Import useRouter for navigation
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage for storing tokens
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage for storing tokens
+import { API_URL } from "../config";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,7 +28,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login/", { // Replace with your API URL
+      const response = await fetch(`${API_URL}/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,26 +41,31 @@ export default function Login() {
 
       const data = await response.json();
 
-      setLoading(false);
-
       if (!response.ok) {
         Alert.alert("Error", data.error || "Something went wrong.");
+        setLoading(false);
         return;
       }
 
       if (data.access_token) {
-        // Store the tokens in AsyncStorage
-        await AsyncStorage.setItem('access_token', data.access_token);
-        await AsyncStorage.setItem('refresh_token', data.refresh_token); // Store refresh token if needed
+        // Store tokens in AsyncStorage
+        await AsyncStorage.setItem("access_token", data.access_token);
+        await AsyncStorage.setItem("refresh_token", data.refresh_token); // Store refresh token if needed
 
+        setLoading(false);
         Alert.alert("Success", "Logged in successfully!");
-        router.push("/dashboard"); // Navigate to dashboard if login is successful
+
+        // Add a slight delay before navigating to ensure async storage operations complete
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 100);
       } else {
         Alert.alert("Error", "Invalid credentials.");
+        setLoading(false);
       }
     } catch (error) {
       setLoading(false);
-      console.error(error);
+      console.error("Login error:", error);
       Alert.alert("Error", "An error occurred during login. Please try again later.");
     }
   };
