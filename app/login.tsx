@@ -72,7 +72,7 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Instagram</Text>
+      <Text style={styles.header}>Login to your Account</Text>
 
       <TextInput
         style={styles.input}
