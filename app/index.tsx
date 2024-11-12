@@ -42,6 +42,40 @@ export default function Index() {
         <Text style={styles.buttonText}>Explore Job Listings</Text>
       </Pressable>
 
+      {/* Recent Jobs Section */}
+      <View style={styles.recentJobsSection}>
+        <Text style={styles.sectionTitle}>Recent Jobs</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.recentJobsList}>
+          <View style={styles.jobCard}>
+            <Text style={styles.jobTitle}>Software Developer</Text>
+            <Text style={styles.jobDescription}>Join our team as a software developer. Full-stack position.</Text>
+            <Pressable style={styles.jobButton} onPress={() => router.push("/login")}>
+              <Text style={styles.jobButtonText}>Apply Now</Text>
+            </Pressable>
+          </View>
+          <View style={styles.jobCard}>
+            <Text style={styles.jobTitle}>Graphic Designer</Text>
+            <Text style={styles.jobDescription}>Looking for a talented designer to create visuals for campaigns.</Text>
+            <Pressable style={styles.jobButton} onPress={() => router.push("/login")}>
+              <Text style={styles.jobButtonText}>Apply Now</Text>
+            </Pressable>
+          </View>
+          <View style={styles.jobCard}>
+            <Text style={styles.jobTitle}>Data Analyst</Text>
+            <Text style={styles.jobDescription}>Seeking a data analyst to analyze market trends and insights.</Text>
+            <Pressable style={styles.jobButton} onPress={() => router.push("/login")}>
+              <Text style={styles.jobButtonText}>Apply Now</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </View>
+
+      {/* Featured Job Button */}
+      <Pressable style={styles.featuredJobButton} onPress={() => router.push("/job-listings")}>
+        <Text style={styles.featuredJobButtonText}>Featured Job: Software Engineer</Text>
+      </Pressable>
+
+      {/* Sidebar Menu */}
       {sidebarVisible && (
         <TouchableWithoutFeedback onPress={closeSidebar}>
           <Animated.View style={[styles.sidebar, { left: sidebarAnim }]}>
@@ -109,9 +143,75 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  recentJobsSection: {
+    marginTop: 30,
+    width: "100%",
+    paddingHorizontal: 10,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  recentJobsList: {
+    flexDirection: "row",
+    paddingBottom: 20,
+  },
+  jobCard: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 8,
+    marginRight: 15,
+    width: 250,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  jobTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#007BFF",
+  },
+  jobDescription: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 5,
+    marginBottom: 15,
+  },
+  jobButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 8,
+    borderRadius: 5,
+  },
+  jobButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  featuredJobButton: {
+    backgroundColor: "#28A745",
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+    marginTop: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  featuredJobButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
   sidebarToggleButton: {
     position: "absolute",
-    top: 60,  // Adjusted the position to move it further down
+    top: 60,  
     left: 20,
     backgroundColor: "#007BFF",
     padding: 12,
@@ -124,7 +224,7 @@ const styles = StyleSheet.create({
   },
   sidebar: {
     position: "absolute",
-    top: 60,  // Adjusted position
+    top: 60,  
     left: -300,
     width: "70%",
     height: "100%",
@@ -142,8 +242,7 @@ const styles = StyleSheet.create({
   closeButton: {
     position: "absolute",
     top: 20,
-    left: 20,  // Close button positioned to the left
-    zIndex: 1,
+    left: 20,
   },
   sidebarContent: {
     marginTop: 80,
