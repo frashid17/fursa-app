@@ -89,8 +89,8 @@ const reviews = [
     avatar: "https://i.pravatar.cc/150?img=5",
   },
   {
-    user: "Elizabeth Nzisas", //added new user 
-    rating: 4,
+    user: "Elizabeth Nzisa", //added new user 
+    rating: 5,
     text: "I love the app and how easy it is to use it", 
     avatar: "https://i.pravatar.cc/150?img=49",
   },
