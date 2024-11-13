@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Job  # Ensure the Job model is imported
 
 # Serializer for signup
 class SignupSerializer(serializers.ModelSerializer):
@@ -28,6 +29,12 @@ class SignupSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+
+# Serializer for Job model
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Job
+        fields = ['id', 'title', 'company', 'description', 'requirements', 'location']
 
 # API View for Signup
 class SignupView(APIView):
@@ -72,8 +79,7 @@ class LoginView(APIView):
         
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
-# API View for Contact Us (updated)
+# API View for Contact Us
 class ContactUsView(APIView):
     permission_classes = [AllowAny]
 
@@ -103,3 +109,12 @@ class ContactUsView(APIView):
         
         except Exception as e:
             return Response({"error": f"Failed to send message: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# API View for listing all jobs
+class JobListView(APIView):
+    permission_classes = [AllowAny]  # Publicly accessible
+
+    def get(self, request):
+        jobs = Job.objects.all()  # Retrieve all jobs from the database
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
