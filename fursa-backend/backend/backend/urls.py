@@ -22,7 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/signup/', views.SignupView.as_view(), name='signup'),
     path('api/login/', views.LoginView.as_view(), name='login'),
-    path('contact/', views.ContactUsView.as_view(), name='contact_us'),  # Use .as_view() for ContactUsView
+    path('contact/', views.ContactUsView.as_view(), name='contact_us'),
+    path('api/jobs/', views.JobListView.as_view(), name='job-list'),  # Use .as_view() for ContactUsView
 ]
 
 
