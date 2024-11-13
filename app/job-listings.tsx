@@ -88,6 +88,12 @@ const reviews = [
     text: "The role is exciting, but there's room for improvement in communication from management.",
     avatar: "https://i.pravatar.cc/150?img=5",
   },
+  {
+    user: "Elizabeth Nzisas", //added new user 
+    rating: 4,
+    text: "I love the app and how easy it is to use it", 
+    avatar: "https://i.pravatar.cc/150?img=49",
+  },
 ];
 
 export default function JobListings() {
