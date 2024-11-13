@@ -1,62 +1,26 @@
-import React, { useState, useRef } from "react";
-import { 
-  Text, 
-  View, 
-  TouchableOpacity, 
-  StyleSheet, 
-  ScrollView, 
-  TextInput, 
-  Button, 
-  Alert, 
-  Image, 
-  Animated 
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Button,
+  Alert,
+  Image,
+  Animated,
 } from "react-native";
 
-// Job data
-const jobs = [
-  {
-    id: 1,
-    title: "Software Engineer",
-    company: "Tech Solutions Ltd",
-    description: "We are looking for a talented software engineer to join our team and work on exciting projects.",
-    requirements: "3+ years experience in software development, proficiency in JavaScript, React, Node.js.",
-    location: "Mombasa, Kenya",
-  },
-  {
-    id: 2,
-    title: "Graphic Designer",
-    company: "Creative Designs Co.",
-    description: "Looking for a creative graphic designer with a passion for designing eye-catching visuals.",
-    requirements: "Proficiency in Adobe Photoshop, Illustrator, and InDesign.",
-    location: "Mombasa, Kenya",
-  },
-  {
-    id: 3,
-    title: "Project Manager",
-    company: "BuildRight Corp.",
-    description: "We need a Project Manager to oversee project execution from start to finish, ensuring timely delivery.",
-    requirements: "5+ years of project management experience, excellent communication and organizational skills.",
-    location: "Mombasa, Kenya",
-  },
-  {
-    id: 4,
-    title: "Marketing Specialist",
-    company: "GrowthHub Ltd",
-    description: "We are looking for an experienced Marketing Specialist to join our team and handle marketing strategies.",
-    requirements: "Experience in digital marketing, content creation, and SEO optimization.",
-    location: "Mombasa, Kenya",
-  },
-  {
-    id: 5,
-    title: "Customer Support Representative",
-    company: "TechHelp Ltd",
-    description: "We are hiring a customer support rep to assist our clients and provide solutions to their problems.",
-    requirements: "Excellent communication skills, problem-solving abilities, and previous customer service experience.",
-    location: "Mombasa, Kenya",
-  },
-];
+// Define types for the review data
+interface Review {
+  user: string;
+  avatar: string;
+  rating: number;
+  text: string;
+}
 
-// Sample reviews with ratings
 const reviews = [
   {
     user: "Khadija Mchori",
@@ -96,31 +60,61 @@ const reviews = [
   },
 ];
 
-export default function JobListings() {
-  const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
-  const [review, setReview] = useState("");
-  const animatedValues = useRef(jobs.map(() => new Animated.Value(0))).current;
 
-  // Toggle job details visibility with animation
+// Define types for the job data
+interface Job {
+  id: number;
+  title: string;
+  company: string;
+  description: string;
+  requirements: string;
+  location: string;
+}
+
+export default function JobListings(): JSX.Element {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
+  const [review, setReview] = useState<string>("");
+  const animatedValues = useRef<Animated.Value[]>([]);
+
+  // Fetch job listings from the Django API and initialize animatedValues
+  useEffect(() => {
+    axios
+      .get<Job[]>("http://10.0.1.18:8000/api/jobs/") // Replace with your actual API URL
+      .then((response) => {
+        setJobs(response.data);
+        // Initialize animatedValues based on fetched jobs
+        animatedValues.current = response.data.map(() => new Animated.Value(0));
+      })
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          console.error("Error fetching job listings:", error.message);
+        } else {
+          console.error("Unknown error:", error);
+        }
+      });
+  }, []);
+
   const toggleJobDetails = (id: number) => {
-    const index = jobs.findIndex(job => job.id === id);
+    const index = jobs.findIndex((job) => job.id === id);
     const isExpanded = expandedJobId === id;
 
     if (isExpanded) {
-      Animated.timing(animatedValues[index], {
+      Animated.timing(animatedValues.current[index], {
         toValue: 0,
         duration: 300,
         useNativeDriver: false,
       }).start(() => setExpandedJobId(null));
     } else {
       setExpandedJobId(id);
-      Animated.timing(animatedValues[index], {
+      Animated.timing(animatedValues.current[index], {
         toValue: 1,
         duration: 300,
         useNativeDriver: false,
       }).start();
     }
   };
+
 
   const handleReviewSubmit = (jobId: number) => {
     if (review) {
@@ -143,7 +137,7 @@ export default function JobListings() {
           </TouchableOpacity>
 
           {expandedJobId === job.id && (
-            <Animated.View style={[styles.jobDetails, { opacity: animatedValues[index] }]}>
+            <Animated.View style={[styles.jobDetails, { opacity: animatedValues.current[index] }]}>
               <Text style={styles.jobDescription}>Description: {job.description}</Text>
               <Text style={styles.jobDescription}>Requirements: {job.requirements}</Text>
               <Text style={styles.jobDescription}>Location: {job.location}</Text>
@@ -189,95 +183,75 @@ export default function JobListings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#E5E5E5",
+    padding: 10,
+    backgroundColor: "#f8f8f8",
   },
   header: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: "bold",
-    color: "#007BFF",
-    marginBottom: 20,
     textAlign: "center",
+    marginBottom: 20,
   },
   jobCard: {
+    backgroundColor: "#fff",
+    padding: 15,
     marginBottom: 20,
-    backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    padding: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   jobTitleContainer: {
-    paddingBottom: 10,
+    marginBottom: 10,
   },
   jobTitle: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "bold",
-    color: "#333333",
+    color: "#333",
   },
   companyName: {
-    fontSize: 16,
-    color: "#666666",
+    fontSize: 14,
+    color: "#777",
   },
   jobDetails: {
-    marginTop: 15,
-    paddingLeft: 10,
-    borderLeftWidth: 4,
-    borderLeftColor: "#007BFF",
+    marginTop: 10,
   },
   jobDescription: {
-    fontSize: 16,
-    color: "#444444",
-    marginBottom: 5,
+    fontSize: 14,
+    color: "#333",
   },
   reviewSection: {
-    marginTop: 15,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#eeeeee",
+    marginTop: 20,
   },
   reviewHeader: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
     marginBottom: 10,
   },
   reviewInput: {
-    width: "100%",
-    padding: 12,
+    height: 40,
+    borderColor: "#ccc",
     borderWidth: 1,
-    borderColor: "#cccccc",
-    borderRadius: 8,
-    backgroundColor: "#fafafa",
+    borderRadius: 5,
+    paddingLeft: 10,
     marginBottom: 10,
-    fontSize: 16,
   },
   footer: {
     marginTop: 30,
-    backgroundColor: "#f9f9f9",
-    padding: 20,
-    borderRadius: 10,
   },
   footerText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
-    color: "#007BFF",
-    marginBottom: 15,
-    textAlign: "center",
+    marginBottom: 10,
   },
   reviewCard: {
-    backgroundColor: "#ffffff",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    backgroundColor: "#fff",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+    borderColor: "#ccc",
+    borderWidth: 1,
   },
   userInfo: {
     flexDirection: "row",
@@ -285,30 +259,28 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     marginRight: 10,
   },
   userName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#333",
   },
   ratingContainer: {
     flexDirection: "row",
-    marginBottom: 5,
+    marginBottom: 10,
   },
   filledStar: {
     color: "#FFD700",
-    fontSize: 18,
   },
   emptyStar: {
-    color: "#D3D3D3",
-    fontSize: 18,
+    color: "#ccc",
   },
   reviewText: {
     fontSize: 14,
-    color: "#555555",
+    color: "#333",
   },
 });
