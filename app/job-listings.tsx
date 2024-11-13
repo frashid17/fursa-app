@@ -59,31 +59,31 @@ const jobs = [
 // Sample reviews with ratings
 const reviews = [
   {
-    user: "Patrick Mwangi",
+    user: "Khadija Mchori",
     rating: 4,
     text: "Great opportunity, the company culture seems amazing. Definitely recommend!",
     avatar: "https://i.pravatar.cc/150?img=1",
   },
   {
-    user: "Mumina Dalacha",
+    user: "Patrick Mwangi",
     rating: 5,
     text: "Awesome position for anyone with a passion for tech. Very fast-paced and challenging work environment!",
     avatar: "https://i.pravatar.cc/150?img=2",
   },
   {
-    user: "Ahlam Abdhallah",
+    user: "Joseph Amos",
     rating: 3,
     text: "Job looks good, but the workload is a bit too much. Could be better managed.",
     avatar: "https://i.pravatar.cc/150?img=3",
   },
   {
-    user: "Nickson Simiyu",
+    user: "Thomas Mwaisaka ",
     rating: 5,
     text: "Great work-life balance, supportive team, and great growth opportunities.",
     avatar: "https://i.pravatar.cc/150?img=4",
   },
   {
-    user: "Ashley Obano",
+    user: "Najma Said",
     rating: 4,
     text: "The role is exciting, but there's room for improvement in communication from management.",
     avatar: "https://i.pravatar.cc/150?img=5",
