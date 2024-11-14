@@ -78,5 +78,5 @@ For guidance, community support, and contributions:
 
 ---
 
-This project is actively maintained by [frashid17](https://github.com/frashid17) and welcomes contributions to improve and expand its functionality.
+This project is actively maintained by [Patrick Mwangi](https://github.com/frashid17) and welcomes contributions to improve and expand its functionality.
 
