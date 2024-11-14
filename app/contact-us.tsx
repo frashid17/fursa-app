@@ -14,7 +14,7 @@ export default function ContactUs() {
     }
 
     try {
-      const response = await fetch("http://10.0.1.215:8000/contact/", { // Replace with your actual backend URL
+      const response = await fetch("http://10.0.1.127:8000/contact/", { // Replace with your actual backend URL
         method: "POST",
         headers: {
           "Content-Type": "application/json",

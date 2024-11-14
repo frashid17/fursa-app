@@ -80,7 +80,7 @@ export default function JobListings(): JSX.Element {
   // Fetch job listings from the Django API and initialize animatedValues
   useEffect(() => {
     axios
-      .get<Job[]>("http://10.0.1.18:8000/api/jobs/") // Replace with your actual API URL
+      .get<Job[]>("http://10.0.1.127:8000/api/jobs/") 
       .then((response) => {
         setJobs(response.data);
         // Initialize animatedValues based on fetched jobs
