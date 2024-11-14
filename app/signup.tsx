@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import {
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient for gradient button
 import { Link, useRouter } from "expo-router";
-import { API_URL } from "../config";
+import { API_URL } from "../config"; // Assuming this is where your base URL is stored
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -13,38 +21,50 @@ export default function Signup() {
   const router = useRouter();
 
   const handleSubmit = async () => {
+    // Validate that the passwords match
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match.");
       return;
     }
 
-    if (name && email && password) {
-      setLoading(true);
-      try {
-        const response = await fetch(`${API_URL}/signup/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: name, email, password }),
-        });
-        const data = await response.json();
-
-        if (response.ok) {
-          Alert.alert("Success", "Account created successfully!");
-          router.push("/login");
-        } else if (data.email && data.email.includes("Email already exists")) {
-          Alert.alert("Error", "Email already exists. Please log in.");
-          router.push("/login");
-        } else {
-          Alert.alert("Error", data.message || "Something went wrong.");
-        }
-      } catch (error) {
-        console.error("Error during signup:", error);
-        Alert.alert("Error", "Unable to reach the server. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    } else {
+    // Validate that all fields are filled
+    if (!name || !email || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields.");
+      return;
+    }
+
+    // Begin loading state
+    setLoading(true);
+
+    try {
+      // Send signup request to the API
+      const response = await fetch(`${API_URL}/signup/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: name, // If the API expects "username" for name
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      // Check if the response is okay
+      if (response.ok) {
+        Alert.alert("Success", "Account created successfully!");
+        router.push("/login");
+      } else if (data.email && data.email.includes("Email already exists")) {
+        Alert.alert("Error", "Email already exists. Please log in.");
+        router.push("/login");
+      } else {
+        Alert.alert("Error", data.message || "Something went wrong.");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      Alert.alert("Error", "Unable to reach the server. Please try again later.");
+    } finally {
+      setLoading(false); // Stop loading after the request is done
     }
   };
 
@@ -52,6 +72,7 @@ export default function Signup() {
     <View style={styles.container}>
       <Text style={styles.header}>Create Your Account</Text>
 
+      {/* Input fields for signup */}
       <TextInput
         style={styles.input}
         placeholder="Full Name"
@@ -100,6 +121,7 @@ export default function Signup() {
         </LinearGradient>
       </TouchableOpacity>
 
+      {/* Footer link to login page */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
           Already have an account?{" "}
