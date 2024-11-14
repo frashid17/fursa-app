@@ -8,6 +8,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons"; // Import icons for input fields
 import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient for gradient button
 import { Link, useRouter } from "expo-router";
 import { API_URL } from "../config"; // Assuming this is where your base URL is stored
@@ -72,38 +73,53 @@ export default function Signup() {
     <View style={styles.container}>
       <Text style={styles.header}>Create Your Account</Text>
 
-      {/* Input fields for signup */}
-      <TextInput
-        style={styles.input}
-        placeholder="Full Name"
-        value={name}
-        onChangeText={setName}
-        placeholderTextColor="#888"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        placeholderTextColor="#888"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        placeholderTextColor="#888"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-        placeholderTextColor="#888"
-      />
+      {/* Input fields for signup with icons */}
+      <View style={styles.inputContainer}>
+        <Ionicons name="person-outline" size={20} color="#6c757d" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Full Name"
+          value={name}
+          onChangeText={setName}
+          placeholderTextColor="#B0B0B0"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="mail-outline" size={20} color="#6c757d" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          placeholderTextColor="#B0B0B0"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="lock-closed-outline" size={20} color="#6c757d" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholderTextColor="#B0B0B0"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="lock-closed-outline" size={20} color="#6c757d" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+          placeholderTextColor="#B0B0B0"
+        />
+      </View>
 
       {/* Gradient button styled like Instagram */}
       <TouchableOpacity style={styles.buttonContainer} onPress={handleSubmit} disabled={loading}>
@@ -143,35 +159,53 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F2F5",
   },
   header: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
-    color: "#333",
-    marginBottom: 30,
+    color: "#fff", // White text for header
+    marginBottom: 40,
+    textAlign: "center",
+    paddingHorizontal: 30,
   },
-  input: {
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     width: "100%",
-    padding: 12,
     marginBottom: 15,
     borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "#ccc",
+    borderRadius: 30,
+    borderColor: "#ddd",
     backgroundColor: "#fff",
+    paddingLeft: 15,
+    paddingVertical: 5,
+    shadowColor: "#bbb", // Light shadow for depth
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  input: {
+    width: "90%",
+    padding: 15,
     fontSize: 16,
     color: "#333",
   },
   buttonContainer: {
     width: "100%",
-    borderRadius: 8,
+    borderRadius: 30,
     overflow: "hidden",
   },
   button: {
     paddingVertical: 15,
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 30,
+    justifyContent: "center",
   },
   buttonText: {
-    color: "#FFF",
-    fontSize: 16,
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
   },
   footer: {
@@ -182,7 +216,7 @@ const styles = StyleSheet.create({
     color: "#555",
   },
   link: {
-    color: "#007BFF",
+    color: "#ff6f61", // Vibrant color for the link
     fontWeight: "bold",
   },
 });
