@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack } from "expo-router"; // Keep Stack for navigation within the app
 import React from "react";
 
 export default function RootLayout() {
@@ -27,15 +27,15 @@ export default function RootLayout() {
       <Stack.Screen
         name="about-us"
         options={{
-          title: "About Us", // Custom header for the dashboard
-          headerShown: true, // Show header on the dashboard screen
+          title: "About Us", // Custom header for the about us screen
+          headerShown: true, // Show header on the about us screen
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="contact-us"
         options={{
-          title: "Contact Us", // Custom header for the dashboard
-          headerShown: true, // Show header on the dashboard screen
+          title: "Contact Us", // Custom header for the contact us screen
+          headerShown: true, // Show header on the contact us screen
         }}
       />
     </Stack>

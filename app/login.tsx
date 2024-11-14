@@ -11,6 +11,7 @@ import {
 import { useRouter } from "expo-router"; // Import useRouter for navigation
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage for storing tokens
 import { API_URL } from "../config";
+import { Ionicons } from "@expo/vector-icons"; // Import icons
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -72,24 +73,31 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Login to your Account</Text>
+      <Text style={styles.header}>Login</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Phone number, username, or email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        placeholderTextColor="#B0B0B0"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        placeholderTextColor="#B0B0B0"
-      />
+      <View style={styles.inputContainer}>
+        <Ionicons name="person-outline" size={20} color="#6c757d" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Phone number, username, or email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          placeholderTextColor="#B0B0B0"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="lock-closed-outline" size={20} color="#6c757d" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholderTextColor="#B0B0B0"
+        />
+      </View>
 
       <TouchableOpacity
         style={styles.loginButton}
@@ -123,33 +131,56 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#f0f4f8", // Light background
+    backgroundImage: "linear-gradient(to bottom right, #4e73df, #1cc88a)", // Vibrant gradient
   },
   header: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#000",
+    color: "#fff", // White text for header
     marginBottom: 40,
+    textAlign: "center",
+    paddingHorizontal: 30,
   },
-  input: {
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     width: "100%",
-    padding: 12,
     marginBottom: 15,
     borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "#dbdbdb",
-    backgroundColor: "#fafafa",
+    borderRadius: 30,
+    borderColor: "#ddd",
+    backgroundColor: "#fff",
+    paddingLeft: 15,
+    paddingVertical: 5,
+    shadowColor: "#bbb", // Light shadow for depth
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  input: {
+    width: "90%",
+    padding: 15,
     fontSize: 16,
     color: "#333",
   },
   loginButton: {
     width: "100%",
     padding: 15,
-    backgroundColor: "#0095f6", // Instagram blue color
-    borderRadius: 8,
+    backgroundColor: "#ff6f61", // Vibrant coral button
+    borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 20,
+    shadowColor: "#ff6f61", // Button shadow matching the color
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 8,
   },
   loginButtonText: {
     fontSize: 18,
@@ -158,19 +189,21 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     fontSize: 14,
-    color: "#0095f6",
+    color: "#ff6f61", // Matching color to the button
     marginBottom: 30,
+    textDecorationLine: "underline", // Underline for emphasis
   },
   signupContainer: {
     flexDirection: "row",
   },
   signupText: {
     fontSize: 14,
-    color: "#000",
+    color: "#fff",
   },
   signupLink: {
     fontSize: 14,
-    color: "#0095f6",
+    color: "#ff6f61", // Vibrant coral color for the signup link
     fontWeight: "bold",
+    textDecorationLine: "underline", // Underlined text for signup link
   },
 });
