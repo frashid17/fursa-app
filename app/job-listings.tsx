@@ -7,13 +7,13 @@ import {
   StyleSheet,
   ScrollView,
   TextInput,
-  Button,
   Alert,
   Image,
   Animated,
 } from "react-native";
+import { MaterialIcons, Ionicons, FontAwesome } from "@expo/vector-icons";
 
-// Define types for the review data
+// Define types for reviews
 interface Review {
   user: string;
   avatar: string;
@@ -21,7 +21,7 @@ interface Review {
   text: string;
 }
 
-const reviews = [
+const reviews: Review[] = [
   {
     user: "Khadija Mchori",
     rating: 4,
@@ -60,7 +60,6 @@ const reviews = [
   },
 ];
 
-
 // Define types for the job data
 interface Job {
   id: number;
@@ -77,21 +76,15 @@ export default function JobListings(): JSX.Element {
   const [review, setReview] = useState<string>("");
   const animatedValues = useRef<Animated.Value[]>([]);
 
-  // Fetch job listings from the Django API and initialize animatedValues
   useEffect(() => {
     axios
-      .get<Job[]>("http://192.168.1.199:8000/api/jobs/") 
+      .get<Job[]>("http://192.168.1.199:8000/api/jobs/")
       .then((response) => {
         setJobs(response.data);
-        // Initialize animatedValues based on fetched jobs
         animatedValues.current = response.data.map(() => new Animated.Value(0));
       })
-      .catch((error: unknown) => {
-        if (error instanceof Error) {
-          console.error("Error fetching job listings:", error.message);
-        } else {
-          console.error("Unknown error:", error);
-        }
+      .catch((error) => {
+        console.error("Error fetching job listings:", error);
       });
   }, []);
 
@@ -115,7 +108,6 @@ export default function JobListings(): JSX.Element {
     }
   };
 
-
   const handleReviewSubmit = (jobId: number) => {
     if (review) {
       Alert.alert("Review Submitted", `Your review for job ID ${jobId} has been submitted.`);
@@ -127,20 +119,28 @@ export default function JobListings(): JSX.Element {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Job Listings</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Job Opportunities</Text>
+      </View>
 
       {jobs.map((job, index) => (
         <View key={job.id} style={styles.jobCard}>
-          <TouchableOpacity onPress={() => toggleJobDetails(job.id)} style={styles.jobTitleContainer}>
-            <Text style={styles.jobTitle}>{job.title}</Text>
-            <Text style={styles.companyName}>{job.company}</Text>
+          <TouchableOpacity onPress={() => toggleJobDetails(job.id)} style={styles.jobHeader}>
+            <Ionicons name="briefcase" size={24} color="#007BFF" />
+            <View style={styles.jobHeaderText}>
+              <Text style={styles.jobTitle}>{job.title}</Text>
+              <Text style={styles.companyName}>{job.company}</Text>
+            </View>
           </TouchableOpacity>
 
           {expandedJobId === job.id && (
             <Animated.View style={[styles.jobDetails, { opacity: animatedValues.current[index] }]}>
-              <Text style={styles.jobDescription}>Description: {job.description}</Text>
-              <Text style={styles.jobDescription}>Requirements: {job.requirements}</Text>
-              <Text style={styles.jobDescription}>Location: {job.location}</Text>
+              <Text style={styles.jobLabel}>Description:</Text>
+              <Text style={styles.jobText}>{job.description}</Text>
+              <Text style={styles.jobLabel}>Requirements:</Text>
+              <Text style={styles.jobText}>{job.requirements}</Text>
+              <Text style={styles.jobLabel}>Location:</Text>
+              <Text style={styles.jobText}>{job.location}</Text>
             </Animated.View>
           )}
 
@@ -153,7 +153,9 @@ export default function JobListings(): JSX.Element {
                 value={review}
                 onChangeText={setReview}
               />
-              <Button title="Submit Review" color="#007BFF" onPress={() => handleReviewSubmit(job.id)} />
+              <TouchableOpacity style={styles.submitButton} onPress={() => handleReviewSubmit(job.id)}>
+                <Text style={styles.submitButtonText}>Submit Review</Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -165,12 +167,19 @@ export default function JobListings(): JSX.Element {
           <View key={index} style={styles.reviewCard}>
             <View style={styles.userInfo}>
               <Image source={{ uri: review.avatar }} style={styles.userAvatar} />
-              <Text style={styles.userName}>{review.user}</Text>
-            </View>
-            <View style={styles.ratingContainer}>
-              {Array.from({ length: 5 }, (_, i) => (
-                <Text key={i} style={i < review.rating ? styles.filledStar : styles.emptyStar}>★</Text>
-              ))}
+              <View>
+                <Text style={styles.userName}>{review.user}</Text>
+                <View style={styles.ratingContainer}>
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <FontAwesome
+                      key={i}
+                      name={i < review.rating ? "star" : "star-o"}
+                      size={16}
+                      color="#FFD700"
+                    />
+                  ))}
+                </View>
+              </View>
             </View>
             <Text style={styles.reviewText}>{review.text}</Text>
           </View>
@@ -183,27 +192,39 @@ export default function JobListings(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: "#f8f8f8",
   },
   header: {
+    backgroundColor: "#007BFF",
+    padding: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: 20,
+  },
+  headerText: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "#fff",
     textAlign: "center",
-    marginBottom: 20,
   },
   jobCard: {
     backgroundColor: "#fff",
     padding: 15,
-    marginBottom: 20,
+    marginHorizontal: 15,
+    marginBottom: 15,
     borderRadius: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  jobTitleContainer: {
+  jobHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
+  },
+  jobHeaderText: {
+    marginLeft: 10,
   },
   jobTitle: {
     fontSize: 18,
@@ -217,15 +238,24 @@ const styles = StyleSheet.create({
   jobDetails: {
     marginTop: 10,
   },
-  jobDescription: {
+  jobLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#555",
+  },
+  jobText: {
     fontSize: 14,
     color: "#333",
+    marginBottom: 10,
   },
   reviewSection: {
-    marginTop: 20,
+    marginTop: 15,
+    borderTopColor: "#ccc",
+    borderTopWidth: 1,
+    paddingTop: 10,
   },
   reviewHeader: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
   },
@@ -233,12 +263,24 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     paddingLeft: 10,
     marginBottom: 10,
   },
+  submitButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
   footer: {
-    marginTop: 30,
+    marginTop: 20,
+    padding: 15,
   },
   footerText: {
     fontSize: 18,
@@ -248,10 +290,12 @@ const styles = StyleSheet.create({
   reviewCard: {
     backgroundColor: "#fff",
     padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
-    borderColor: "#ccc",
-    borderWidth: 1,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    marginBottom: 15,
   },
   userInfo: {
     flexDirection: "row",
@@ -259,25 +303,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userAvatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     marginRight: 10,
   },
   userName: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
   },
   ratingContainer: {
     flexDirection: "row",
-    marginBottom: 10,
-  },
-  filledStar: {
-    color: "#FFD700",
-  },
-  emptyStar: {
-    color: "#ccc",
+    marginTop: 5,
   },
   reviewText: {
     fontSize: 14,
