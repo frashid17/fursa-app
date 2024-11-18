@@ -23,17 +23,17 @@ export default function ContactUs() {
       Alert.alert("Error", "Please fill in all fields.");
       return;
     }
-
+  
     setLoading(true);
     try {
-      const response = await fetch("http://10.0.1.127:8081/contact/", {
+      const response = await fetch("http://192.168.216.218:8081/contact/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name, email, message }),
       });
-
+  
       if (response.ok) {
         Alert.alert("Thank You!", "Your message has been sent.");
         setName("");
@@ -44,11 +44,18 @@ export default function ContactUs() {
         throw new Error(errorData.error || "Failed to send message");
       }
     } catch (error) {
-      Alert.alert("Error", error.message || "Something went wrong. Please try again.");
+      if (error instanceof Error) {
+        // Safe to access `message` property
+        Alert.alert("Error", error.message || "Something went wrong. Please try again.");
+      } else {
+        // If the error is not an instance of Error, show a generic message
+        Alert.alert("Error", "Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
