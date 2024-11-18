@@ -78,7 +78,7 @@ export default function JobListings(): JSX.Element {
 
   useEffect(() => {
     axios
-      .get<Job[]>("http://192.168.1.199:8000/api/jobs/")
+      .get<Job[]>("http://192.168.246.218:8000/api/jobs/")
       .then((response) => {
         setJobs(response.data);
         animatedValues.current = response.data.map(() => new Animated.Value(0));
